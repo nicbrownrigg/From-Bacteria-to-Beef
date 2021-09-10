@@ -5,7 +5,7 @@ function init() {
   // Use the list of sample names to populate the select options
   d3.json("samples.json").then((data) => {
     var sampleNames = data.names;
-
+    console.log(data) 
     sampleNames.forEach((sample) => {
       selector
         .append("option")
@@ -74,12 +74,13 @@ function buildCharts(sample) {
     // Hint: Get the the top 10 otu_ids and map them in descending order  
     //  so the otu_ids with the most bacteria are last. 
 
-    var yticks = otu_ids.slice(0,10).map(otuID);
+    var yticks = otu_ids.slice(0,10).map(otuID => `OTU ${otuID}`).reverse();
 
     // 8. Create the trace for the bar chart. 
     var barData = {
       y: yticks,
       x: sample_values.slice(0, 10).reverse(),
+      text:otu_labels.slice(0,10).reverse(),
       type: "bar",
       orientation: "h",
     };
@@ -90,7 +91,7 @@ function buildCharts(sample) {
     };
     // 10. Use Plotly to plot the data with the layout. 
     // Plotly.newPlot("plotArea", barData, barLayout);
-  });
+    Plotly.newPlot("plotArea", [barData], barLayout);
 // Bar and Bubble charts
 // Create the buildCharts function.
     // // Deliverable 1 Step 10. Use Plotly to plot the data with the layout. 
@@ -128,21 +129,21 @@ function buildCharts(sample) {
     // Filter the data for the object with the desired sample number
     var resultArray = metadata.filter(sampleObj => sampleObj.id == sample);
     var result = resultArray[0];
-    var washFreq = result.washFreq;
+    var washFreq = result.wfreq;
     console.log(washFreq);
  
 
     // Use Plotly to plot the bar data and layout.
-    Plotly.newPlot("plotArea", barData, barLayout);
+    
     
     // Use Plotly to plot the bubble data and layout.
-    Plotly.newPlot("plotAreaBubble", bubbleData, bubbleLayout);
+    Plotly.newPlot("plotAreaBubble", [bubbleData], bubbleLayout);
    
     
     // 4. Create the trace for the gauge chart.
     var gaugeData = {
       title: { text: "Bellybutton Washing Frequency" },
-      value: parseFloat(washFrequency),
+      value: parseFloat(washFreq),
       type: "indicator",
       mode: "gauge+number",
       gauge: {
@@ -165,4 +166,4 @@ function buildCharts(sample) {
 
     // 6. Use Plotly to plot the gauge data and layout.
     Plotly.newPlot("plotAreagauge", [gaugeData], gaugeLayout);
-  }
+  })};
